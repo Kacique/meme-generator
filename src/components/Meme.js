@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import memeData from "../memeData";
+import React, { useState, useEffect } from "react";
 
 function Meme() {
   const [meme, setMeme] = useState({
@@ -8,16 +7,14 @@ function Meme() {
     randomImage: "http://i.imgflip.com/1bij.jpg",
   });
 
-  const [allMemeImages, setAllMemeImages] = useState(memeData);
+  const [allMemeImages, setAllMemeImages] = useState([]);
 
   function getMeme() {
-    const memesArr = allMemeImages.data.memes;
+    const memesArr = allMemeImages;
     const randomNum = Math.floor(Math.random() * memesArr.length);
     const url = memesArr[randomNum].url;
 
     setMeme((previousValue) => ({
-      //Because we want to access the previous
-      //Top and Bottom Text
       ...previousValue,
       randomImage: url,
     }));
@@ -32,6 +29,12 @@ function Meme() {
       };
     });
   }
+
+  useEffect(() => {
+    fetch("https://api.imgflip.com/get_memes")
+      .then((response) => response.json())
+      .then((data) => setAllMemeImages(data.data.memes));
+  }, []);
 
   return (
     <main>
